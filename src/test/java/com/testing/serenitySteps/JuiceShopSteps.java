@@ -5,6 +5,7 @@ import cucumber.api.DataTable;
 import io.restassured.response.Response;
 import net.thucydides.core.annotations.Step;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.util.*;
 
@@ -15,17 +16,25 @@ import static net.serenitybdd.core.Serenity.setSessionVariable;
 public class JuiceShopSteps extends BaseSteps {
   private final static String _API_USERS_ = "/api/Users/";
   private final static String _REST_USER_LOGIN_ = "/rest/user/login/";
+  private final static String _REST_USER_ERASURE_ = "/rest/user/erasure-request/";
+  private final static String _API_BASKET_ITEMS_ = "/api/BasketItems/";
+  private final static String _REST_BASKET_ = "/rest/basket/";
+  private final static String _API_ADDRESS_ = "/api/Addresss/";
+  private final static String _API_DELIVERIES_ = "/api/Deliverys/";
+  private final static String _API_CARDS_ = "/api/Cards/";
+  private final static String _API_SECURITY_ANSWERS_ = "/api/SecurityAnswers/";
+  private final static String _REST_USER_RESET_PASSWORD = "/rest/user/reset-password/";
 
   @Step
   public static void getBasketContent(){
-    sendRequest(GET, "INSERT MISSING ENDPOINT HERE" + sessionVariableCalled("basket_id"));
+    sendRequest(GET, _REST_BASKET_ + sessionVariableCalled("basket_id"));
   }
 
   @Step
   public static void addItemToBasket(DataTable dataTable) throws IOException {
     BaseRequestBody requestBody = createBodyCustom(dataTable);
     requestBody.addKey("BasketId", sessionVariableCalled("basket_id").toString());
-    sendRequestWithBodyJson(POST, "INSERT MISSING ENDPOINT HERE", requestBody.getBody());
+    sendRequestWithBodyJson(POST, _API_BASKET_ITEMS_, requestBody.getBody());
   }
 
   @Step
@@ -64,21 +73,47 @@ public class JuiceShopSteps extends BaseSteps {
 
   @Step
   public static void resetPassword(DataTable dataTable) throws IOException {
-    sendRequestWithBodyJson(POST, "INSERT MISSING ENDPOINT HERE", createBody(handleRandomEmail(dataTable)));
+    sendRequestWithBodyJson(POST, _REST_USER_RESET_PASSWORD, createBody(handleRandomEmail(dataTable)));
   }
 
   @Step
   public static void purchaseTheItems(DataTable dataTable) throws IOException {
     BaseRequestBody requestBody = createBodyCustom(dataTable);
     // Add payment id
-    requestBody.addKey("orderDetails --> paymentId", sessionVariableCalled("???????").toString());
+    requestBody.addKey("orderDetails --> paymentId", sessionVariableCalled("payment_id").toString());
     // Add address id
-    requestBody.addKey("orderDetails --> addressId", sessionVariableCalled("????????").toString());
+    requestBody.addKey("orderDetails --> addressId", sessionVariableCalled("address_id").toString());
+
     sendRequestWithBodyJson(
             POST,
             // Add basket id
-            createBasketCheckoutEndpoint(sessionVariableCalled("????????").toString()),
+            createBasketCheckoutEndpoint(sessionVariableCalled("basket_id").toString()),
             requestBody.getBody());
+  }
+
+  @Step
+  public static void requestErasure(DataTable dataTable) throws IOException {
+    sendRequestWithBodyJson(POST, _REST_USER_ERASURE_, createBody(dataTable));
+  }
+
+  @Step
+  public static void addAddress(DataTable dataTable) throws IOException {
+    sendRequestWithBodyJson(POST, _API_ADDRESS_, createBody(dataTable));
+  }
+
+  @Step
+  public static void getDeliveryOptions() throws IOException {
+    sendRequestWithBodyJson(GET, _API_DELIVERIES_, "{}");
+  }
+
+  @Step
+  public static void addCreditCard(DataTable dataTable) throws IOException {
+    sendRequestWithBodyJson(POST, _API_CARDS_, createBody(dataTable));
+  }
+
+  @Step
+  public static void sendSecurityAnswer(DataTable dataTable) throws IOException {
+    sendRequestWithBodyJson(POST, _API_SECURITY_ANSWERS_ + sessionVariableCalled("user_id"), createBody(dataTable));
   }
 
   // Private

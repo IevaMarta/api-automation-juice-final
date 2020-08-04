@@ -42,4 +42,29 @@ public class JuiceShopDefinitions {
   public void theUserPurchasesTheItemsUsingTheFollowingData(DataTable dataTable) throws IOException {
     JuiceShopSteps.purchaseTheItems(dataTable);
   }
+
+  @When("^the user requests erasure of personal data using following data:$")
+  public void theUserRequestsErasureOfPersonalDataUsingFollowingData(DataTable dataTable) throws IOException {
+    JuiceShopSteps.requestErasure(dataTable);
+  }
+
+  @When("^the user adds an address with the following data:$")
+  public void theUserAddsAnAddressWithTheFollowingData(DataTable dataTable) throws IOException {
+    JuiceShopSteps.addAddress(dataTable);
+  }
+
+  @When("^the user requests delivery options$")
+  public void theUserRequestsDeliveryOptions() throws IOException {
+    JuiceShopSteps.getDeliveryOptions();
+  }
+
+  @When("^the user adds a credit card with following data:$")
+  public void theUserAddsACreditCardWithFollowingData(DataTable dataTable) throws IOException {
+    JuiceShopSteps.addCreditCard(dataTable);
+  }
+
+  @When("^the user sends security answer$")
+  public void theUserSendsSecurityAnswer(DataTable dataTable) throws IOException {
+    JuiceShopSteps.sendSecurityAnswer(dataTable);
+  }
 }
